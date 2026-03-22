@@ -15,7 +15,7 @@
     }
 
     .container {
-      max-width: 960px;
+      max-width: 980px;
       margin: 0 auto;
       padding: 20px;
     }
@@ -63,6 +63,16 @@
       font-size: 13px;
       margin-right: 8px;
       margin-bottom: 8px;
+    }
+
+    .tag-difficulty {
+      background: #fff7ed;
+      color: #c2410c;
+    }
+
+    .tag-parent {
+      background: #f3e8ff;
+      color: #7e22ce;
     }
 
     .passage-text {
@@ -151,7 +161,7 @@
       margin-top: 18px;
       padding: 14px;
       border-radius: 12px;
-      line-height: 1.6;
+      line-height: 1.7;
       display: none;
     }
 
@@ -182,10 +192,6 @@
       border-radius: 14px;
       padding: 16px;
       background: #fafcff;
-    }
-
-    .passage-item h3 {
-      margin-bottom: 8px;
     }
 
     textarea {
@@ -226,6 +232,36 @@
       margin: 12px 0;
     }
 
+    .parent-panel {
+      margin-top: 14px;
+      background: #faf5ff;
+      border: 1px solid #e9d5ff;
+      border-radius: 14px;
+      padding: 14px;
+      color: #3b0764;
+    }
+
+    .parent-panel h4 {
+      margin: 0 0 10px 0;
+      font-size: 16px;
+    }
+
+    .parent-row {
+      margin-bottom: 10px;
+    }
+
+    .parent-label {
+      font-weight: bold;
+      display: inline-block;
+      margin-right: 6px;
+    }
+
+    .divider {
+      height: 1px;
+      background: #ececec;
+      margin: 12px 0;
+    }
+
     @media (max-width: 640px) {
       .question-text { font-size: 18px; }
       .passage-title { font-size: 20px; }
@@ -239,7 +275,7 @@
       <div class="top-bar">
         <div>
           <h1>📘 Grade 3 ELA Trainer</h1>
-          <div class="small-note">Question bank powered by data.js</div>
+          <div class="small-note">Practice mode + parent-friendly feedback</div>
         </div>
         <div class="nav-row" style="margin-top:0;">
           <button class="primary-btn" onclick="showHome()">Home</button>
@@ -252,7 +288,7 @@
     <div id="homeCard" class="card">
       <h2>Choose a Passage</h2>
       <div class="small-note" style="margin-bottom: 16px;">
-        Start with one article, then practice its questions.
+        Pick one passage, read it, then practice the questions.
       </div>
       <div id="passageList" class="passage-list"></div>
     </div>
@@ -270,6 +306,7 @@
 
     <div id="questionCard" class="card hidden">
       <div id="questionNumber" class="question-number"></div>
+      <div id="questionMeta" style="margin-bottom:10px;"></div>
       <div id="questionText" class="question-text"></div>
 
       <div id="multipleChoiceArea">
@@ -296,6 +333,28 @@
         <div id="feedbackTitle"></div>
         <div id="feedbackExplanation" class="explanation"></div>
         <ul id="writingChecklist" class="checklist"></ul>
+
+        <div id="parentPanel" class="parent-panel hidden">
+          <h4>👨‍👩‍👧 Parent Notes</h4>
+          <div class="parent-row">
+            <span class="parent-label">题型：</span>
+            <span id="parentSkill"></span>
+          </div>
+          <div class="parent-row">
+            <span class="parent-label">难度：</span>
+            <span id="parentDifficulty"></span>
+          </div>
+          <div class="divider"></div>
+          <div class="parent-row">
+            <span class="parent-label">中文讲解：</span>
+            <span id="parentCnExplanation"></span>
+          </div>
+          <div class="divider"></div>
+          <div class="parent-row">
+            <span class="parent-label">高频错因：</span>
+            <span id="parentMistake"></span>
+          </div>
+        </div>
       </div>
 
       <div class="nav-row">
@@ -342,6 +401,7 @@
     const passageText = document.getElementById('passageText');
 
     const questionNumber = document.getElementById('questionNumber');
+    const questionMeta = document.getElementById('questionMeta');
     const questionText = document.getElementById('questionText');
     const multipleChoiceArea = document.getElementById('multipleChoiceArea');
     const writingArea = document.getElementById('writingArea');
@@ -353,6 +413,12 @@
     const feedbackTitle = document.getElementById('feedbackTitle');
     const feedbackExplanation = document.getElementById('feedbackExplanation');
     const writingChecklist = document.getElementById('writingChecklist');
+
+    const parentPanel = document.getElementById('parentPanel');
+    const parentSkill = document.getElementById('parentSkill');
+    const parentDifficulty = document.getElementById('parentDifficulty');
+    const parentCnExplanation = document.getElementById('parentCnExplanation');
+    const parentMistake = document.getElementById('parentMistake');
 
     const nextBtn = document.getElementById('nextBtn');
     const resultBtn = document.getElementById('resultBtn');
@@ -371,6 +437,10 @@
 
     function getSelectedPassage() {
       return passages[selectedPassageIndex];
+    }
+
+    function getCurrentQuestion() {
+      return getSelectedPassage().questions[currentQuestionIndex];
     }
 
     function renderHome() {
@@ -433,6 +503,20 @@
       passageText.textContent = passage.passage;
     }
 
+    function renderQuestionMeta(q) {
+      let html = '';
+      if (q.skillLabelZh) {
+        html += `<span class="tag">${q.skillLabelZh}</span>`;
+      }
+      if (q.difficulty) {
+        html += `<span class="tag tag-difficulty">难度：${q.difficulty}</span>`;
+      }
+      if (q.type === 'writing') {
+        html += `<span class="tag tag-parent">写作题</span>`;
+      }
+      questionMeta.innerHTML = html;
+    }
+
     function renderQuestion() {
       const passage = getSelectedPassage();
       const q = passage.questions[currentQuestionIndex];
@@ -445,15 +529,17 @@
       writingChecklist.innerHTML = '';
       nextBtn.classList.add('hidden');
       resultBtn.classList.add('hidden');
+      parentPanel.classList.add('hidden');
 
       questionNumber.textContent = `${passage.title} • Question ${currentQuestionIndex + 1} of ${passage.questions.length}`;
       questionText.textContent = q.question;
+      renderQuestionMeta(q);
 
       if (q.type === 'multiple') {
         multipleChoiceArea.classList.remove('hidden');
         writingArea.classList.add('hidden');
         renderMultipleChoice(q);
-      } else if (q.type === 'writing') {
+      } else {
         multipleChoiceArea.classList.add('hidden');
         writingArea.classList.remove('hidden');
         renderWriting(q);
@@ -478,12 +564,27 @@
       writingAnswer.value = '';
     }
 
+    function renderParentPanel(q) {
+      const hasAnyParentData =
+        q.skillLabelZh || q.difficulty || q.cnExplanation || q.commonMistake;
+
+      if (!hasAnyParentData) {
+        parentPanel.classList.add('hidden');
+        return;
+      }
+
+      parentSkill.textContent = q.skillLabelZh || '—';
+      parentDifficulty.textContent = q.difficulty || '—';
+      parentCnExplanation.textContent = q.cnExplanation || '—';
+      parentMistake.textContent = q.commonMistake || '—';
+      parentPanel.classList.remove('hidden');
+    }
+
     function selectAnswer(selectedIndex) {
       if (answered) return;
       answered = true;
 
-      const passage = getSelectedPassage();
-      const q = passage.questions[currentQuestionIndex];
+      const q = getCurrentQuestion();
       const buttons = document.querySelectorAll('.choice-btn');
 
       buttons.forEach((btn, index) => {
@@ -508,14 +609,16 @@
         feedbackTitle.innerHTML = `❌ Not quite. The correct answer is ${String.fromCharCode(65 + q.answer)}. ${q.choices[q.answer]}.`;
       }
 
-      feedbackExplanation.textContent = q.explanation || '';
+      feedbackExplanation.innerHTML = `
+        <div><strong>English Explanation:</strong> ${q.explanation || ''}</div>
+      `;
       feedbackBox.style.display = 'block';
+      renderParentPanel(q);
       showNextOrResult();
     }
 
     function checkWriting() {
-      const passage = getSelectedPassage();
-      const q = passage.questions[currentQuestionIndex];
+      const q = getCurrentQuestion();
       const text = writingAnswer.value.trim();
       const lower = text.toLowerCase();
 
@@ -524,7 +627,7 @@
 
       const hasEnoughText = text.length > 20;
       const hasPeriods = text.includes('.');
-      const hasDetailWords = /(one detail|another detail|because|animals|paint|shelter|trash|garden|food|sell|donate)/i.test(text);
+      const hasDetailWords = /(one detail|another detail|because|animals|paint|shelter|trash|garden|food|sell|donate|wind|sun|coat|power|eagle|homework)/i.test(text);
 
       if (hasEnoughText) {
         points++;
@@ -555,7 +658,7 @@
           items.push('❌ Add the main idea clearly.');
         }
       } else {
-        if (/(means|problem|cause|smart|power|wind|sun|pests)/i.test(lower)) {
+        if (/(means|problem|cause|smart|power|wind|sun|pests|proud|confident|alike)/i.test(lower)) {
           points++;
           items.push('✅ You answered the question directly.');
         } else {
@@ -568,17 +671,17 @@
         level = 'Strong writing response';
         feedbackBox.className = 'feedback correct';
         feedbackTitle.innerHTML = '✅ Nice job!';
-        feedbackExplanation.innerHTML = 'Your response includes the important parts of a strong answer.';
+        feedbackExplanation.innerHTML = `<div><strong>English Feedback:</strong> Your response includes the important parts of a strong answer.</div>`;
       } else if (points >= 2) {
         level = 'Developing response';
         feedbackBox.className = 'feedback wrong';
         feedbackTitle.innerHTML = '🟡 Good start!';
-        feedbackExplanation.innerHTML = 'You have some good ideas. Add clearer details to make your answer stronger.';
+        feedbackExplanation.innerHTML = `<div><strong>English Feedback:</strong> You have some good ideas. Add clearer details to make your answer stronger.</div>`;
       } else {
         level = 'Needs more detail';
         feedbackBox.className = 'feedback wrong';
         feedbackTitle.innerHTML = '❌ Keep going!';
-        feedbackExplanation.innerHTML = 'Try using the sentence frame and include stronger evidence from the passage.';
+        feedbackExplanation.innerHTML = `<div><strong>English Feedback:</strong> Try using the sentence frame and include stronger evidence from the passage.</div>`;
       }
 
       writingChecklist.innerHTML = items.map(item => `<li>${item}</li>`).join('');
@@ -586,12 +689,12 @@
       writingChecks[q.id] = level;
       answered = true;
 
+      renderParentPanel(q);
       showNextOrResult();
     }
 
     function fillSample() {
-      const passage = getSelectedPassage();
-      const q = passage.questions[currentQuestionIndex];
+      const q = getCurrentQuestion();
       if (q.sample) {
         writingAnswer.value = q.sample;
       }
