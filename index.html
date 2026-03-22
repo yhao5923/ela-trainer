@@ -3,1031 +3,824 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Grade 3 ELA Trainer</title>
+  <title>Reading Practice App</title>
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      background: #f6f8fb;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f7fb;
       color: #222;
     }
 
-    .container {
-      max-width: 980px;
+    .app {
+      max-width: 920px;
       margin: 0 auto;
       padding: 20px;
     }
 
     .card {
       background: #fff;
-      border-radius: 16px;
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
       padding: 20px;
       margin-bottom: 18px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
     }
 
-    h1, h2, h3, h4 { margin-top: 0; }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
 
-    .small-note {
+    h2 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+
+    h3 {
+      margin-top: 0;
+    }
+
+    .subtitle {
       color: #666;
-      font-size: 14px;
+      margin-bottom: 14px;
     }
 
-    .hidden { display: none; }
-
-    .top-bar {
+    .toolbar {
       display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 14px 0 8px;
+    }
+
+    button {
+      border: none;
+      background: #1f6feb;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    button:hover {
+      background: #1859bb;
+    }
+
+    button.secondary {
+      background: #eef3fb;
+      color: #1d3b6d;
+    }
+
+    button.secondary:hover {
+      background: #dde8fa;
+    }
+
+    button.ghost {
+      background: #f2f2f2;
+      color: #333;
+    }
+
+    button.ghost:hover {
+      background: #e4e4e4;
+    }
+
+    .top-row {
+      display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       gap: 12px;
-      flex-wrap: wrap;
       align-items: center;
     }
 
     .passage-title {
       font-size: 24px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
-    .passage-meta {
-      margin-bottom: 14px;
-    }
-
-    .tag {
-      display: inline-block;
-      background: #eef3ff;
-      color: #1e40af;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 13px;
-      margin-right: 8px;
-      margin-bottom: 8px;
-    }
-
-    .tag-difficulty {
-      background: #fff7ed;
-      color: #c2410c;
-    }
-
-    .tag-parent {
-      background: #f3e8ff;
-      color: #7e22ce;
-    }
-
-    .tag-wrong {
-      background: #fee2e2;
-      color: #b91c1c;
-    }
-
-    .passage-text {
+    .passage-box {
       line-height: 1.8;
-      white-space: pre-line;
+      font-size: 18px;
+      background: #fbfcff;
+      border: 1px solid #dce7f7;
+      border-radius: 14px;
+      padding: 16px;
     }
 
-    .question-number {
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 8px;
+    .tap-word {
+      color: #1f5fd1;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 1px 2px;
+      border-radius: 4px;
+    }
+
+    .tap-word:hover {
+      background: #eaf1ff;
+    }
+
+    .question-block {
+      border: 1px solid #e6ebf3;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      background: #fcfdff;
     }
 
     .question-text {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 16px;
+      font-weight: 700;
+      margin-bottom: 10px;
       line-height: 1.5;
     }
 
-    .choices {
-      display: grid;
-      gap: 12px;
-    }
-
-    button {
-      border: none;
-      border-radius: 12px;
-      padding: 14px 16px;
+    .choice {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #dde5f0;
+      margin-bottom: 8px;
       cursor: pointer;
-      font-size: 16px;
-      transition: 0.2s ease;
+      background: #fff;
     }
 
-    .primary-btn {
-      background: #2563eb;
-      color: white;
+    .choice input {
+      margin-right: 10px;
     }
 
-    .primary-btn:hover {
-      background: #1d4ed8;
+    .choice.correct {
+      background: #eaf8ee;
+      border-color: #81c995;
     }
 
-    .secondary-btn {
-      background: #6b7280;
-      color: white;
-    }
-
-    .secondary-btn:hover {
-      background: #4b5563;
-    }
-
-    .danger-btn {
-      background: #dc2626;
-      color: white;
-    }
-
-    .danger-btn:hover {
-      background: #b91c1c;
-    }
-
-    .choice-btn {
-      width: 100%;
-      text-align: left;
-      background: #f2f4f8;
-    }
-
-    .choice-btn:hover {
-      background: #e6ebf4;
-    }
-
-    .choice-btn.correct {
-      background: #dff5e4;
-      border: 2px solid #3aa85b;
-    }
-
-    .choice-btn.wrong {
-      background: #fde3e3;
-      border: 2px solid #d94a4a;
-    }
-
-    .choice-btn.disabled {
-      opacity: 0.9;
-      cursor: default;
-    }
-
-    .nav-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 18px;
-      flex-wrap: wrap;
+    .choice.wrong {
+      background: #fdecec;
+      border-color: #e59595;
     }
 
     .feedback {
-      margin-top: 18px;
-      padding: 14px;
-      border-radius: 12px;
-      line-height: 1.7;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-weight: 600;
       display: none;
     }
 
     .feedback.correct {
-      background: #e9f9ee;
-      color: #1f6a35;
       display: block;
+      background: #eaf8ee;
+      color: #176c2f;
     }
 
     .feedback.wrong {
-      background: #fff1f1;
-      color: #9b2226;
       display: block;
+      background: #fdecec;
+      color: #a12626;
     }
 
     .explanation {
       margin-top: 8px;
-      color: #333;
+      color: #444;
+      line-height: 1.6;
+      display: none;
     }
 
-    .passage-list,
-    .wrong-list {
-      display: grid;
-      gap: 14px;
+    .explanation.show {
+      display: block;
     }
 
-    .passage-item,
-    .wrong-item {
-      border: 1px solid #e5e7eb;
+    .panel {
+      background: #f9fbff;
+      border: 1px solid #dce7f7;
       border-radius: 14px;
       padding: 16px;
-      background: #fafcff;
+      margin-top: 12px;
     }
 
-    textarea {
-      width: 100%;
-      min-height: 180px;
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px solid #d1d5db;
-      font-size: 16px;
-      line-height: 1.6;
-      resize: vertical;
+    .hidden {
+      display: none;
     }
 
-    .template-box {
-      background: #f8fafc;
-      border: 1px dashed #94a3b8;
-      padding: 14px;
-      border-radius: 12px;
-      margin: 14px 0;
-      line-height: 1.7;
-      white-space: pre-line;
+    .vocab-item,
+    .wrong-item {
+      border-bottom: 1px solid #e5eaf3;
+      padding: 12px 0;
     }
 
-    .checklist {
-      margin-top: 14px;
-      padding-left: 18px;
-      line-height: 1.8;
+    .vocab-item:last-child,
+    .wrong-item:last-child {
+      border-bottom: none;
     }
 
-    .result-box {
-      text-align: center;
-      padding: 30px 20px;
+    .vocab-word {
+      font-size: 18px;
+      font-weight: 700;
     }
 
-    .score-big {
-      font-size: 42px;
-      font-weight: bold;
-      margin: 12px 0;
-    }
-
-    .parent-panel {
-      margin-top: 14px;
-      background: #faf5ff;
-      border: 1px solid #e9d5ff;
-      border-radius: 14px;
-      padding: 14px;
-      color: #3b0764;
-    }
-
-    .parent-panel h4 {
-      margin: 0 0 10px 0;
-      font-size: 16px;
-    }
-
-    .parent-row {
-      margin-bottom: 10px;
-    }
-
-    .parent-label {
-      font-weight: bold;
-      display: inline-block;
-      margin-right: 6px;
-    }
-
-    .divider {
-      height: 1px;
-      background: #ececec;
-      margin: 12px 0;
-    }
-
-    .empty-box {
-      text-align: center;
-      padding: 24px;
+    .small {
       color: #666;
-      background: #fafafa;
-      border: 1px dashed #ddd;
-      border-radius: 14px;
+      font-size: 14px;
+      margin-top: 4px;
     }
 
-    .wrong-item h4 {
-      margin-bottom: 8px;
+    .empty-note {
+      color: #666;
+      font-style: italic;
     }
 
-    .wrong-answer-box {
-      background: #f8fafc;
-      border-radius: 10px;
-      padding: 10px 12px;
-      margin-top: 10px;
-      line-height: 1.6;
+    .footer-nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #eef4ff;
+      color: #274c8b;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 13px;
+      margin-right: 8px;
+      margin-top: 4px;
+    }
+
+    .popup {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 999;
+    }
+
+    .popup-card {
+      width: min(100%, 440px);
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      position: relative;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      background: transparent;
+      color: #444;
+      font-size: 24px;
+      padding: 4px 8px;
+    }
+
+    .close-btn:hover {
+      background: #f1f1f1;
     }
 
     @media (max-width: 640px) {
-      .question-text { font-size: 18px; }
-      .passage-title { font-size: 20px; }
-      .score-big { font-size: 34px; }
+      .passage-box {
+        font-size: 17px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .passage-title {
+        font-size: 21px;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .footer-nav {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="app">
     <div class="card">
-      <div class="top-bar">
+      <h1>Reading Practice App</h1>
+      <div class="subtitle">Passage, Questions, Audio, Word Help, Wrong Book, and Word Book</div>
+
+      <div class="toolbar">
+        <button id="readAloudBtn">Read Aloud</button>
+        <button id="stopAudioBtn" class="ghost">Stop Audio</button>
+        <button id="wordHelpBtn" class="secondary">Word Help</button>
+        <button id="wordBookBtn" class="secondary">Word Book</button>
+        <button id="wrongBookBtn" class="secondary">Wrong Book</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="top-row">
         <div>
-          <h1>📘 Grade 3 ELA Trainer</h1>
-          <div class="small-note">English-only UI with parent notes and wrong book</div>
-        </div>
-        <div class="nav-row" style="margin-top:0;">
-          <button class="primary-btn" onclick="showHome()">Home</button>
-          <button class="secondary-btn" onclick="showPassage()">Read</button>
-          <button class="primary-btn" onclick="showQuestion()">Practice</button>
-          <button class="secondary-btn" onclick="showWrongBook()">Wrong Book</button>
+          <div id="passageNumber" class="small"></div>
+          <div id="passageTitle" class="passage-title"></div>
         </div>
       </div>
+
+      <div id="passage" class="passage-box"></div>
+
+      <div id="wordHelpPanel" class="panel hidden"></div>
+      <div id="wordBookPanel" class="panel hidden"></div>
+      <div id="wrongBookPanel" class="panel hidden"></div>
     </div>
 
-    <div id="homeCard" class="card">
-      <h2>Choose a Passage</h2>
-      <div class="small-note" style="margin-bottom: 16px;">
-        Pick one passage, read it, then practice the questions.
-      </div>
-      <div id="passageList" class="passage-list"></div>
-    </div>
+    <div class="card">
+      <h2>Questions</h2>
+      <div id="questionsContainer"></div>
 
-    <div id="passageCard" class="card hidden">
-      <div id="passageTitle" class="passage-title"></div>
-      <div id="passageMeta" class="passage-meta"></div>
-      <div id="passageText" class="passage-text"></div>
-
-      <div class="nav-row">
-        <button class="primary-btn" onclick="startSelectedPassage()">Start Questions ▶</button>
-        <button class="secondary-btn" onclick="showHome()">Back to Home</button>
-      </div>
-    </div>
-
-    <div id="questionCard" class="card hidden">
-      <div id="questionNumber" class="question-number"></div>
-      <div id="questionMeta" style="margin-bottom:10px;"></div>
-      <div id="questionText" class="question-text"></div>
-
-      <div id="multipleChoiceArea">
-        <div id="choicesContainer" class="choices"></div>
-      </div>
-
-      <div id="writingArea" class="hidden">
-        <div style="margin-bottom: 10px;">
-          <span class="tag">Writing</span>
-          <span class="tag">Use Evidence</span>
-          <span class="tag">Complete Sentences</span>
-        </div>
-
-        <div id="templateBox" class="template-box"></div>
-        <textarea id="writingAnswer" placeholder="Type your answer here..."></textarea>
-
-        <div class="nav-row">
-          <button class="primary-btn" onclick="checkWriting()">Check My Writing</button>
-          <button class="secondary-btn" onclick="fillSample()">Use Sample Answer</button>
-        </div>
-      </div>
-
-      <div id="feedbackBox" class="feedback">
-        <div id="feedbackTitle"></div>
-        <div id="feedbackExplanation" class="explanation"></div>
-        <ul id="writingChecklist" class="checklist"></ul>
-
-        <div id="parentPanel" class="parent-panel hidden">
-          <h4>👨‍👩‍👧 Parent Notes</h4>
-          <div class="parent-row">
-            <span class="parent-label">Skill:</span>
-            <span id="parentSkill"></span>
-          </div>
-          <div class="parent-row">
-            <span class="parent-label">Difficulty:</span>
-            <span id="parentDifficulty"></span>
-          </div>
-          <div class="divider"></div>
-          <div class="parent-row">
-            <span class="parent-label">Parent Explanation:</span>
-            <span id="parentExplanation"></span>
-          </div>
-          <div class="divider"></div>
-          <div class="parent-row">
-            <span class="parent-label">Common Mistake:</span>
-            <span id="parentMistake"></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="nav-row">
-        <button id="nextBtn" class="primary-btn hidden" onclick="nextQuestion()">Next ▶</button>
-        <button id="resultBtn" class="primary-btn hidden" onclick="showResults()">See Results ▶</button>
-        <button class="secondary-btn" onclick="showPassage()">Back to Passage</button>
-      </div>
-    </div>
-
-    <div id="wrongBookCard" class="card hidden">
-      <div class="top-bar">
-        <div>
-          <h2>❌ Wrong Book</h2>
-          <div class="small-note">Automatically saved incorrect and weak-response questions</div>
-        </div>
-        <div class="nav-row" style="margin-top:0;">
-          <button class="danger-btn" onclick="clearWrongBook()">Clear Wrong Book</button>
-          <button class="secondary-btn" onclick="showHome()">Back Home</button>
-        </div>
-      </div>
-
-      <div id="wrongBookStats" style="margin: 10px 0 16px 0;"></div>
-      <div id="wrongList" class="wrong-list"></div>
-    </div>
-
-    <div id="resultCard" class="card hidden">
-      <div class="result-box">
-        <h2>🎉 Practice Complete</h2>
-        <div class="small-note" id="resultPassageTitle"></div>
-        <div class="score-big" id="finalScore"></div>
-        <div id="finalMessage" style="margin-bottom: 18px;"></div>
-        <div id="writingSummary" style="margin-bottom: 18px;"></div>
-
-        <div class="nav-row" style="justify-content:center;">
-          <button class="primary-btn" onclick="restartCurrentPassage()">Do Again</button>
-          <button class="secondary-btn" onclick="showPassage()">Read Again</button>
-          <button class="secondary-btn" onclick="showWrongBook()">Open Wrong Book</button>
-          <button class="secondary-btn" onclick="showHome()">Choose Another Passage</button>
-        </div>
+      <div class="footer-nav">
+        <button id="prevBtn" class="ghost">Previous Passage</button>
+        <button id="nextBtn">Next Passage</button>
       </div>
     </div>
   </div>
 
-  <script type="module">
-    import { passages } from './data.js';
+  <div id="wordPopup" class="popup hidden">
+    <div class="popup-card">
+      <button id="closePopupBtn" class="close-btn">×</button>
+      <h3 id="popupWord"></h3>
+      <div id="popupPronunciation" class="small"></div>
+      <p id="popupMeaning"></p>
+      <p id="popupExample"></p>
+    </div>
+  </div>
 
-    let selectedPassageIndex = 0;
-    let currentQuestionIndex = 0;
-    let score = 0;
-    let answered = false;
-    let writingChecks = {};
-    let wrongBook = JSON.parse(localStorage.getItem('ela_wrong_book') || '[]');
+  <script>
+    const passages = [
+      {
+        id: 1,
+        title: "Big Moon Tortilla",
+        passage: `Big Moon wanted to make a tortilla. She mixed the corn and patted the dough. Then she cooked it over the fire. The tortilla was warm and ready to eat.`,
+        vocabulary: [
+          {
+            word: "tortilla",
+            pronunciation: "/tɔːrˈtiː.jə/",
+            meaning: "A thin, round flatbread made from corn or flour.",
+            example: "Big Moon made a warm tortilla."
+          },
+          {
+            word: "mixed",
+            pronunciation: "/mɪkst/",
+            meaning: "Combined two or more things together.",
+            example: "She mixed the corn with water."
+          },
+          {
+            word: "dough",
+            pronunciation: "/doʊ/",
+            meaning: "A soft mixture used to make bread or other baked food.",
+            example: "The dough was ready to cook."
+          },
+          {
+            word: "cooked",
+            pronunciation: "/kʊkt/",
+            meaning: "Prepared food by heating it.",
+            example: "She cooked the tortilla over the fire."
+          },
+          {
+            word: "fire",
+            pronunciation: "/faɪər/",
+            meaning: "Something hot and bright that burns.",
+            example: "The food was cooked over the fire."
+          }
+        ],
+        questions: [
+          {
+            q: "What did Big Moon want to make?",
+            choices: ["A soup", "A tortilla", "A cake", "A pie"],
+            answer: 1,
+            explanation: "The passage says that Big Moon wanted to make a tortilla.",
+            relatedWords: ["tortilla"]
+          },
+          {
+            q: "What did she do before cooking?",
+            choices: ["She mixed the corn", "She cut apples", "She planted seeds", "She washed dishes"],
+            answer: 0,
+            explanation: "The passage says she mixed the corn and patted the dough before cooking.",
+            relatedWords: ["mixed", "dough"]
+          }
+        ]
+      },
+      {
+        id: 2,
+        title: "The North Wind and the Sun",
+        passage: `The North Wind and the Sun argued about who was stronger. They saw a traveler wearing a coat. The North Wind blew hard, but the traveler held his coat tighter. Then the Sun shone warmly, and the traveler took off his coat.`,
+        vocabulary: [
+          {
+            word: "argued",
+            pronunciation: "/ˈɑːrɡjuːd/",
+            meaning: "Spoke in a strong way because of disagreement.",
+            example: "The two friends argued about the game."
+          },
+          {
+            word: "traveler",
+            pronunciation: "/ˈtrævələr/",
+            meaning: "A person who is going from one place to another.",
+            example: "The traveler walked down the road."
+          },
+          {
+            word: "blew",
+            pronunciation: "/bluː/",
+            meaning: "Moved air strongly.",
+            example: "The wind blew all day."
+          },
+          {
+            word: "tighter",
+            pronunciation: "/ˈtaɪtər/",
+            meaning: "More closely or more firmly.",
+            example: "She held the bag tighter."
+          },
+          {
+            word: "warmly",
+            pronunciation: "/ˈwɔːrmli/",
+            meaning: "In a warm and gentle way.",
+            example: "The sun shone warmly in the sky."
+          }
+        ],
+        questions: [
+          {
+            q: "Why did the traveler take off his coat?",
+            choices: ["Because it was raining", "Because the Sun shone warmly", "Because the wind got colder", "Because he was running"],
+            answer: 1,
+            explanation: "The traveler took off his coat after the Sun shone warmly.",
+            relatedWords: ["warmly", "traveler"]
+          },
+          {
+            q: "What happened when the North Wind blew hard?",
+            choices: ["The traveler dropped the coat", "The traveler held his coat tighter", "The traveler sat down", "The coat flew away"],
+            answer: 1,
+            explanation: "The passage says the traveler held his coat tighter when the North Wind blew hard.",
+            relatedWords: ["blew", "tighter"]
+          }
+        ]
+      }
+    ];
 
-    const homeCard = document.getElementById('homeCard');
-    const passageCard = document.getElementById('passageCard');
-    const questionCard = document.getElementById('questionCard');
-    const wrongBookCard = document.getElementById('wrongBookCard');
-    const resultCard = document.getElementById('resultCard');
+    let currentPassageIndex = 0;
+    let wordBook = JSON.parse(localStorage.getItem("wordBook") || "[]");
+    let wrongBook = JSON.parse(localStorage.getItem("wrongBook") || "[]");
 
-    const passageList = document.getElementById('passageList');
-    const passageTitle = document.getElementById('passageTitle');
-    const passageMeta = document.getElementById('passageMeta');
-    const passageText = document.getElementById('passageText');
+    const passageNumberEl = document.getElementById("passageNumber");
+    const passageTitleEl = document.getElementById("passageTitle");
+    const passageEl = document.getElementById("passage");
+    const questionsContainer = document.getElementById("questionsContainer");
 
-    const questionNumber = document.getElementById('questionNumber');
-    const questionMeta = document.getElementById('questionMeta');
-    const questionText = document.getElementById('questionText');
-    const multipleChoiceArea = document.getElementById('multipleChoiceArea');
-    const writingArea = document.getElementById('writingArea');
-    const choicesContainer = document.getElementById('choicesContainer');
-    const templateBox = document.getElementById('templateBox');
-    const writingAnswer = document.getElementById('writingAnswer');
+    const wordHelpBtn = document.getElementById("wordHelpBtn");
+    const wordBookBtn = document.getElementById("wordBookBtn");
+    const wrongBookBtn = document.getElementById("wrongBookBtn");
+    const readAloudBtn = document.getElementById("readAloudBtn");
+    const stopAudioBtn = document.getElementById("stopAudioBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
 
-    const feedbackBox = document.getElementById('feedbackBox');
-    const feedbackTitle = document.getElementById('feedbackTitle');
-    const feedbackExplanation = document.getElementById('feedbackExplanation');
-    const writingChecklist = document.getElementById('writingChecklist');
+    const wordHelpPanel = document.getElementById("wordHelpPanel");
+    const wordBookPanel = document.getElementById("wordBookPanel");
+    const wrongBookPanel = document.getElementById("wrongBookPanel");
 
-    const parentPanel = document.getElementById('parentPanel');
-    const parentSkill = document.getElementById('parentSkill');
-    const parentDifficulty = document.getElementById('parentDifficulty');
-    const parentExplanation = document.getElementById('parentExplanation');
-    const parentMistake = document.getElementById('parentMistake');
+    const wordPopup = document.getElementById("wordPopup");
+    const closePopupBtn = document.getElementById("closePopupBtn");
+    const popupWord = document.getElementById("popupWord");
+    const popupPronunciation = document.getElementById("popupPronunciation");
+    const popupMeaning = document.getElementById("popupMeaning");
+    const popupExample = document.getElementById("popupExample");
 
-    const wrongBookStats = document.getElementById('wrongBookStats');
-    const wrongList = document.getElementById('wrongList');
+    function getCurrentPassage() {
+      return passages[currentPassageIndex];
+    }
 
-    const nextBtn = document.getElementById('nextBtn');
-    const resultBtn = document.getElementById('resultBtn');
-
-    const resultPassageTitle = document.getElementById('resultPassageTitle');
-    const finalScore = document.getElementById('finalScore');
-    const finalMessage = document.getElementById('finalMessage');
-    const writingSummary = document.getElementById('writingSummary');
+    function saveWordBook() {
+      localStorage.setItem("wordBook", JSON.stringify(wordBook));
+    }
 
     function saveWrongBook() {
-      localStorage.setItem('ela_wrong_book', JSON.stringify(wrongBook));
+      localStorage.setItem("wrongBook", JSON.stringify(wrongBook));
     }
 
-    function makeWrongBookKey(passage, q) {
-      return `${passage.id}__${q.id}`;
+    function escapeRegExp(string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     }
 
-    function upsertWrongBookItem(item) {
-      const index = wrongBook.findIndex(x => x.key === item.key);
-      if (index >= 0) {
-        wrongBook[index] = {
-          ...wrongBook[index],
-          ...item,
-          count: (wrongBook[index].count || 1) + 1
-        };
-      } else {
-        wrongBook.unshift({ ...item, count: 1 });
+    function addToWordBook(wordObj, sourceTitle = "") {
+      const exists = wordBook.some(
+        item => item.word.toLowerCase() === wordObj.word.toLowerCase()
+      );
+      if (!exists) {
+        wordBook.push({
+          ...wordObj,
+          sourceTitle
+        });
+        saveWordBook();
       }
-      saveWrongBook();
     }
 
-    function removeWrongBookItem(key) {
-      wrongBook = wrongBook.filter(item => item.key !== key);
-      saveWrongBook();
-      renderWrongBook();
-    }
-
-    function addWrongMultipleChoice(selectedIndex) {
-      const passage = getSelectedPassage();
-      const q = getCurrentQuestion();
-
-      upsertWrongBookItem({
-        key: makeWrongBookKey(passage, q),
-        passageId: passage.id,
-        passageTitle: passage.title,
-        questionId: q.id,
-        number: q.number || '',
-        type: q.type,
-        skillLabel: q.skillLabel || '',
-        difficulty: q.difficulty || '',
-        question: q.question,
-        correctAnswer: `${String.fromCharCode(65 + q.answer)}. ${q.choices[q.answer]}`,
-        userAnswer: `${String.fromCharCode(65 + selectedIndex)}. ${q.choices[selectedIndex]}`,
-        parentExplanation: q.parentExplanation || '',
-        commonMistake: q.commonMistake || '',
-        sample: q.sample || ''
+    function addQuestionWordsToWordBook(question, passage) {
+      const related = question.relatedWords || [];
+      const vocab = passage.vocabulary || [];
+      related.forEach(word => {
+        const found = vocab.find(v => v.word.toLowerCase() === word.toLowerCase());
+        if (found) {
+          addToWordBook(found, passage.title);
+        }
       });
     }
 
-    function addWrongWriting(level) {
-      const passage = getSelectedPassage();
-      const q = getCurrentQuestion();
+    function addToWrongBook(question, selectedIndex, passage) {
+      const exists = wrongBook.some(item =>
+        item.passageTitle === passage.title && item.question === question.q
+      );
 
-      upsertWrongBookItem({
-        key: makeWrongBookKey(passage, q),
-        passageId: passage.id,
-        passageTitle: passage.title,
-        questionId: q.id,
-        number: q.number || '',
-        type: q.type,
-        skillLabel: q.skillLabel || '',
-        difficulty: q.difficulty || '',
-        question: q.question,
-        correctAnswer: q.sample || 'See sample answer.',
-        userAnswer: writingAnswer.value.trim() || '(blank)',
-        parentExplanation: q.parentExplanation || '',
-        commonMistake: q.commonMistake || '',
-        sample: q.sample || '',
-        writingLevel: level
-      });
+      if (!exists) {
+        wrongBook.push({
+          passageTitle: passage.title,
+          question: question.q,
+          choices: question.choices,
+          correctAnswer: question.choices[question.answer],
+          selectedAnswer: selectedIndex >= 0 ? question.choices[selectedIndex] : "No answer",
+          explanation: question.explanation
+        });
+        saveWrongBook();
+      }
     }
 
-    function hideAll() {
-      homeCard.classList.add('hidden');
-      passageCard.classList.add('hidden');
-      questionCard.classList.add('hidden');
-      wrongBookCard.classList.add('hidden');
-      resultCard.classList.add('hidden');
+    function showWordPopup(wordObj, sourceTitle = "") {
+      popupWord.textContent = wordObj.word;
+      popupPronunciation.textContent = wordObj.pronunciation || "";
+      popupMeaning.textContent = wordObj.meaning || "";
+      popupExample.textContent = wordObj.example ? "Example: " + wordObj.example : "";
+      addToWordBook(wordObj, sourceTitle);
+      renderWordBook();
+      wordPopup.classList.remove("hidden");
     }
 
-    function getSelectedPassage() {
-      return passages[selectedPassageIndex];
+    function closeWordPopup() {
+      wordPopup.classList.add("hidden");
     }
 
-    function getCurrentQuestion() {
-      return getSelectedPassage().questions[currentQuestionIndex];
-    }
+    function wrapVocabularyWords(text, vocabulary) {
+      if (!vocabulary || !vocabulary.length) return text;
 
-    function renderHome() {
-      passageList.innerHTML = '';
+      let output = text;
 
-      passages.forEach((passage, index) => {
-        const totalQuestions = passage.questions.length;
-        const item = document.createElement('div');
-        item.className = 'passage-item';
-
-        item.innerHTML = `
-          <h3>${passage.title}</h3>
-          <div class="small-note" style="margin-bottom: 10px;">
-            ${passage.type} • ${totalQuestions} questions
-          </div>
-          <div>
-            <span class="tag">${passage.type}</span>
-            <span class="tag">${totalQuestions} items</span>
-          </div>
-          <div class="nav-row">
-            <button class="primary-btn" data-index="${index}" data-action="read">Read Passage</button>
-            <button class="secondary-btn" data-index="${index}" data-action="start">Start Practice</button>
-          </div>
-        `;
-
-        passageList.appendChild(item);
+      vocabulary.forEach((item, index) => {
+        const safeWord = escapeRegExp(item.word);
+        const regex = new RegExp(`\\b(${safeWord})\\b`, "gi");
+        output = output.replace(regex, `<span class="tap-word" data-vocab-index="${index}">$1</span>`);
       });
 
-      passageList.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const index = Number(e.target.dataset.index);
-          const action = e.target.dataset.action;
-          selectedPassageIndex = index;
-          resetProgress();
+      return output;
+    }
 
-          if (action === 'read') {
-            showPassage();
-          } else {
-            startSelectedPassage();
-          }
+    function bindTapWords(container, vocabulary, sourceTitle) {
+      const words = container.querySelectorAll(".tap-word");
+      words.forEach(el => {
+        el.addEventListener("click", () => {
+          const idx = Number(el.dataset.vocabIndex);
+          const wordObj = vocabulary[idx];
+          if (wordObj) showWordPopup(wordObj, sourceTitle);
         });
       });
+    }
+
+    function renderWordHelp() {
+      const current = getCurrentPassage();
+      const vocab = current.vocabulary || [];
+
+      if (!vocab.length) {
+        wordHelpPanel.innerHTML = `
+          <h3>Word Help</h3>
+          <div class="empty-note">No word help for this passage yet.</div>
+        `;
+        return;
+      }
+
+      wordHelpPanel.innerHTML = `
+        <h3>Word Help</h3>
+        ${vocab.map(item => `
+          <div class="vocab-item">
+            <div class="vocab-word">${item.word}</div>
+            <div class="small">${item.pronunciation || ""}</div>
+            <div>${item.meaning || ""}</div>
+            <div class="small">Example: ${item.example || ""}</div>
+          </div>
+        `).join("")}
+      `;
+    }
+
+    function renderWordBook() {
+      if (!wordBook.length) {
+        wordBookPanel.innerHTML = `
+          <h3>Word Book</h3>
+          <div class="empty-note">No saved words yet.</div>
+        `;
+        return;
+      }
+
+      wordBookPanel.innerHTML = `
+        <h3>Word Book</h3>
+        ${wordBook.map(item => `
+          <div class="vocab-item">
+            <div class="vocab-word">${item.word}</div>
+            <div class="small">${item.pronunciation || ""}</div>
+            <div>${item.meaning || ""}</div>
+            <div class="small">Example: ${item.example || ""}</div>
+            <div class="small">From: ${item.sourceTitle || "Unknown passage"}</div>
+          </div>
+        `).join("")}
+      `;
     }
 
     function renderWrongBook() {
-      wrongList.innerHTML = '';
-
-      if (wrongBook.length === 0) {
-        wrongBookStats.innerHTML = `<span class="tag">0 items</span>`;
-        wrongList.innerHTML = `<div class="empty-box">No wrong questions yet. Do a practice set first.</div>`;
+      if (!wrongBook.length) {
+        wrongBookPanel.innerHTML = `
+          <h3>Wrong Book</h3>
+          <div class="empty-note">No wrong answers yet.</div>
+        `;
         return;
       }
 
-      const multipleCount = wrongBook.filter(x => x.type === 'multiple').length;
-      const writingCount = wrongBook.filter(x => x.type === 'writing').length;
-
-      wrongBookStats.innerHTML = `
-        <span class="tag tag-wrong">Total: ${wrongBook.length}</span>
-        <span class="tag">Multiple Choice: ${multipleCount}</span>
-        <span class="tag">Writing: ${writingCount}</span>
+      wrongBookPanel.innerHTML = `
+        <h3>Wrong Book</h3>
+        ${wrongBook.map(item => `
+          <div class="wrong-item">
+            <div><strong>Passage:</strong> ${item.passageTitle}</div>
+            <div style="margin-top:6px;"><strong>Question:</strong> ${item.question}</div>
+            <div class="small">Your answer: ${item.selectedAnswer}</div>
+            <div class="small">Correct answer: ${item.correctAnswer}</div>
+            <div style="margin-top:6px;">${item.explanation}</div>
+          </div>
+        `).join("")}
       `;
+    }
 
-      wrongBook.forEach(item => {
-        const box = document.createElement('div');
-        box.className = 'wrong-item';
+    function hidePanelsExcept(target) {
+      const panels = [wordHelpPanel, wordBookPanel, wrongBookPanel];
+      panels.forEach(panel => {
+        if (panel === target) {
+          panel.classList.toggle("hidden");
+        } else {
+          panel.classList.add("hidden");
+        }
+      });
+    }
 
-        box.innerHTML = `
-          <h4>${item.passageTitle} ${item.number ? `• Q${item.number}` : ''}</h4>
-          <div style="margin-bottom: 8px;">
-            ${item.skillLabel ? `<span class="tag">${item.skillLabel}</span>` : ''}
-            ${item.difficulty ? `<span class="tag tag-difficulty">Difficulty: ${item.difficulty}</span>` : ''}
-            <span class="tag tag-wrong">Missed ${item.count || 1} time(s)</span>
-          </div>
+    function renderPassage() {
+      const current = getCurrentPassage();
+      passageNumberEl.textContent = `Passage ${currentPassageIndex + 1} of ${passages.length}`;
+      passageTitleEl.textContent = current.title;
 
-          <div><strong>Question:</strong> ${item.question}</div>
+      const htmlText = wrapVocabularyWords(current.passage, current.vocabulary || []);
+      passageEl.innerHTML = htmlText.replace(/\n/g, "<br>");
+      bindTapWords(passageEl, current.vocabulary || [], current.title);
 
-          <div class="wrong-answer-box">
-            <div><strong>Your Answer:</strong> ${escapeHtml(item.userAnswer || '—')}</div>
-            <div><strong>Correct / Sample:</strong> ${escapeHtml(item.correctAnswer || '—')}</div>
-          </div>
+      renderWordHelp();
+      renderQuestions();
+    }
 
-          ${item.parentExplanation ? `<div style="margin-top:10px;"><strong>Parent Explanation:</strong> ${item.parentExplanation}</div>` : ''}
-          ${item.commonMistake ? `<div style="margin-top:10px;"><strong>Common Mistake:</strong> ${item.commonMistake}</div>` : ''}
+    function renderQuestions() {
+      const current = getCurrentPassage();
 
-          <div class="nav-row">
-            <button class="primary-btn" data-action="retry" data-passage="${item.passageId}" data-question="${item.questionId}">Retry This Question</button>
-            <button class="danger-btn" data-action="remove" data-key="${item.key}">Remove</button>
+      questionsContainer.innerHTML = current.questions.map((question, qIndex) => {
+        return `
+          <div class="question-block" data-question-index="${qIndex}">
+            <div class="question-text">${qIndex + 1}. ${question.q}</div>
+
+            ${question.choices.map((choice, cIndex) => `
+              <label class="choice" data-choice-index="${cIndex}">
+                <input type="radio" name="question-${qIndex}" value="${cIndex}">
+                ${choice}
+              </label>
+            `).join("")}
+
+            <button class="check-btn" data-question-index="${qIndex}">Check Answer</button>
+            <div class="feedback" id="feedback-${qIndex}"></div>
+            <div class="explanation" id="explanation-${qIndex}"></div>
           </div>
         `;
+      }).join("");
 
-        wrongList.appendChild(box);
-      });
-
-      wrongList.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const action = e.target.dataset.action;
-
-          if (action === 'remove') {
-            removeWrongBookItem(e.target.dataset.key);
-            return;
-          }
-
-          if (action === 'retry') {
-            const passageId = e.target.dataset.passage;
-            const questionId = e.target.dataset.question;
-            openWrongQuestion(passageId, questionId);
-          }
+      document.querySelectorAll(".check-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const qIndex = Number(btn.dataset.questionIndex);
+          checkAnswer(qIndex);
         });
       });
     }
 
-    function openWrongQuestion(passageId, questionId) {
-      const pIndex = passages.findIndex(p => p.id === passageId);
-      if (pIndex === -1) return;
+    function checkAnswer(qIndex) {
+      const current = getCurrentPassage();
+      const question = current.questions[qIndex];
+      const block = document.querySelector(`.question-block[data-question-index="${qIndex}"]`);
+      const selected = block.querySelector(`input[name="question-${qIndex}"]:checked`);
+      const feedback = document.getElementById(`feedback-${qIndex}`);
+      const explanation = document.getElementById(`explanation-${qIndex}`);
+      const choices = block.querySelectorAll(".choice");
 
-      const qIndex = passages[pIndex].questions.findIndex(q => q.id === questionId);
-      if (qIndex === -1) return;
-
-      selectedPassageIndex = pIndex;
-      currentQuestionIndex = qIndex;
-      answered = false;
-      showQuestion();
-    }
-
-    function clearWrongBook() {
-      wrongBook = [];
-      saveWrongBook();
-      renderWrongBook();
-    }
-
-    function resetProgress() {
-      currentQuestionIndex = 0;
-      score = 0;
-      answered = false;
-      writingChecks = {};
-      writingAnswer.value = '';
-    }
-
-    function renderPassage() {
-      const passage = getSelectedPassage();
-      passageTitle.textContent = passage.title;
-      passageMeta.innerHTML = `
-        <span class="tag">${passage.type}</span>
-        <span class="tag">${passage.questions.length} questions</span>
-      `;
-      passageText.textContent = passage.passage;
-    }
-
-    function renderQuestionMeta(q) {
-      let html = '';
-      if (q.skillLabel) {
-        html += `<span class="tag">${q.skillLabel}</span>`;
-      }
-      if (q.difficulty) {
-        html += `<span class="tag tag-difficulty">Difficulty: ${q.difficulty}</span>`;
-      }
-      if (q.type === 'writing') {
-        html += `<span class="tag tag-parent">Writing Task</span>`;
-      }
-      questionMeta.innerHTML = html;
-    }
-
-    function renderQuestion() {
-      const passage = getSelectedPassage();
-      const q = passage.questions[currentQuestionIndex];
-
-      answered = false;
-      feedbackBox.className = 'feedback';
-      feedbackBox.style.display = 'none';
-      feedbackTitle.innerHTML = '';
-      feedbackExplanation.innerHTML = '';
-      writingChecklist.innerHTML = '';
-      nextBtn.classList.add('hidden');
-      resultBtn.classList.add('hidden');
-      parentPanel.classList.add('hidden');
-
-      questionNumber.textContent = `${passage.title} • Question ${currentQuestionIndex + 1} of ${passage.questions.length}`;
-      questionText.textContent = q.question;
-      renderQuestionMeta(q);
-
-      if (q.type === 'multiple') {
-        multipleChoiceArea.classList.remove('hidden');
-        writingArea.classList.add('hidden');
-        renderMultipleChoice(q);
-      } else {
-        multipleChoiceArea.classList.add('hidden');
-        writingArea.classList.remove('hidden');
-        renderWriting(q);
-      }
-    }
-
-    function renderMultipleChoice(q) {
-      choicesContainer.innerHTML = '';
-      q.choices.forEach((choice, index) => {
-        const btn = document.createElement('button');
-        btn.className = 'choice-btn';
-        btn.textContent = `${String.fromCharCode(65 + index)}. ${choice}`;
-        btn.onclick = () => selectAnswer(index);
-        choicesContainer.appendChild(btn);
+      choices.forEach(choice => {
+        choice.classList.remove("correct", "wrong");
       });
-    }
 
-    function renderWriting(q) {
-      templateBox.textContent = Array.isArray(q.template)
-        ? q.template.join('\n')
-        : 'Write your answer in complete sentences.';
-      writingAnswer.value = '';
-    }
-
-    function renderParentPanel(q) {
-      const hasAnyParentData =
-        q.skillLabel || q.difficulty || q.parentExplanation || q.commonMistake;
-
-      if (!hasAnyParentData) {
-        parentPanel.classList.add('hidden');
+      if (!selected) {
+        feedback.className = "feedback wrong";
+        feedback.textContent = "Please choose an answer first.";
+        explanation.className = "explanation";
+        explanation.textContent = "";
         return;
       }
 
-      parentSkill.textContent = q.skillLabel || '—';
-      parentDifficulty.textContent = q.difficulty || '—';
-      parentExplanation.textContent = q.parentExplanation || '—';
-      parentMistake.textContent = q.commonMistake || '—';
-      parentPanel.classList.remove('hidden');
-    }
+      const selectedIndex = Number(selected.value);
 
-    function selectAnswer(selectedIndex) {
-      if (answered) return;
-      answered = true;
+      if (selectedIndex === question.answer) {
+        feedback.className = "feedback correct";
+        feedback.textContent = "Correct!";
+      } else {
+        feedback.className = "feedback wrong";
+        feedback.textContent = "Not quite. Try to learn from the explanation below.";
+        addToWrongBook(question, selectedIndex, current);
+        addQuestionWordsToWordBook(question, current);
+        renderWrongBook();
+        renderWordBook();
+      }
 
-      const q = getCurrentQuestion();
-      const buttons = document.querySelectorAll('.choice-btn');
-
-      buttons.forEach((btn, index) => {
-        btn.classList.add('disabled');
-        btn.disabled = true;
-
-        if (index === q.answer) {
-          btn.classList.add('correct');
+      choices.forEach((choiceEl, idx) => {
+        if (idx === question.answer) {
+          choiceEl.classList.add("correct");
         }
-
-        if (index === selectedIndex && index !== q.answer) {
-          btn.classList.add('wrong');
+        if (idx === selectedIndex && selectedIndex !== question.answer) {
+          choiceEl.classList.add("wrong");
         }
       });
 
-      if (selectedIndex === q.answer) {
-        score++;
-        feedbackBox.className = 'feedback correct';
-        feedbackTitle.innerHTML = '✅ Correct!';
-      } else {
-        feedbackBox.className = 'feedback wrong';
-        feedbackTitle.innerHTML = `❌ Not quite. The correct answer is ${String.fromCharCode(65 + q.answer)}. ${q.choices[q.answer]}.`;
-        addWrongMultipleChoice(selectedIndex);
-      }
-
-      feedbackExplanation.innerHTML = `
-        <div><strong>English Explanation:</strong> ${q.explanation || ''}</div>
-      `;
-      feedbackBox.style.display = 'block';
-      renderParentPanel(q);
-      showNextOrResult();
+      explanation.className = "explanation show";
+      explanation.textContent = question.explanation;
     }
 
-    function checkWriting() {
-      const q = getCurrentQuestion();
-      const text = writingAnswer.value.trim();
-      const lower = text.toLowerCase();
-
-      let points = 0;
-      const items = [];
-
-      const hasEnoughText = text.length > 20;
-      const hasPeriods = text.includes('.');
-      const hasDetailWords = /(one detail|another detail|because|animals|paint|shelter|trash|garden|food|sell|donate|wind|sun|coat|power|eagle|homework)/i.test(text);
-
-      if (hasEnoughText) {
-        points++;
-        items.push('✅ You wrote enough to show your thinking.');
-      } else {
-        items.push('❌ Write a little more.');
-      }
-
-      if (hasPeriods) {
-        points++;
-        items.push('✅ You used complete sentences or sentence endings.');
-      } else {
-        items.push('❌ Add periods to make complete sentences.');
-      }
-
-      if (hasDetailWords) {
-        points++;
-        items.push('✅ You included supporting details.');
-      } else {
-        items.push('❌ Add evidence from the passage.');
-      }
-
-      if (q.skill === 'main_idea') {
-        if (/(main idea|help|animals|raccoons|adapt|event)/i.test(lower)) {
-          points++;
-          items.push('✅ You included the main idea.');
-        } else {
-          items.push('❌ Add the main idea clearly.');
-        }
-      } else {
-        if (/(means|problem|cause|smart|power|wind|sun|pests|proud|confident|alike|competitive|calm)/i.test(lower)) {
-          points++;
-          items.push('✅ You answered the question directly.');
-        } else {
-          items.push('❌ Answer the question directly first.');
-        }
-      }
-
-      let level = '';
-      if (points >= 4) {
-        level = 'Strong writing response';
-        feedbackBox.className = 'feedback correct';
-        feedbackTitle.innerHTML = '✅ Nice job!';
-        feedbackExplanation.innerHTML = `<div><strong>English Feedback:</strong> Your response includes the important parts of a strong answer.</div>`;
-      } else if (points >= 2) {
-        level = 'Developing response';
-        feedbackBox.className = 'feedback wrong';
-        feedbackTitle.innerHTML = '🟡 Good start!';
-        feedbackExplanation.innerHTML = `<div><strong>English Feedback:</strong> You have some good ideas. Add clearer details to make your answer stronger.</div>`;
-        addWrongWriting(level);
-      } else {
-        level = 'Needs more detail';
-        feedbackBox.className = 'feedback wrong';
-        feedbackTitle.innerHTML = '❌ Keep going!';
-        feedbackExplanation.innerHTML = `<div><strong>English Feedback:</strong> Try using the sentence frame and include stronger evidence from the passage.</div>`;
-        addWrongWriting(level);
-      }
-
-      writingChecklist.innerHTML = items.map(item => `<li>${item}</li>`).join('');
-      feedbackBox.style.display = 'block';
-      writingChecks[q.id] = level;
-      answered = true;
-
-      renderParentPanel(q);
-      showNextOrResult();
+    function speakCurrentPassage() {
+      speechSynthesis.cancel();
+      const current = getCurrentPassage();
+      const utter = new SpeechSynthesisUtterance(current.title + ". " + current.passage);
+      utter.lang = "en-US";
+      utter.rate = 0.95;
+      speechSynthesis.speak(utter);
     }
 
-    function fillSample() {
-      const q = getCurrentQuestion();
-      if (q.sample) {
-        writingAnswer.value = q.sample;
-      }
+    function stopSpeaking() {
+      speechSynthesis.cancel();
     }
 
-    function showNextOrResult() {
-      const passage = getSelectedPassage();
-      if (currentQuestionIndex < passage.questions.length - 1) {
-        nextBtn.classList.remove('hidden');
-      } else {
-        resultBtn.classList.remove('hidden');
-      }
-    }
+    readAloudBtn.addEventListener("click", speakCurrentPassage);
+    stopAudioBtn.addEventListener("click", stopSpeaking);
 
-    function nextQuestion() {
-      currentQuestionIndex++;
-      answered = false;
-      renderQuestion();
-    }
+    wordHelpBtn.addEventListener("click", () => {
+      renderWordHelp();
+      hidePanelsExcept(wordHelpPanel);
+    });
 
-    function showHome() {
-      hideAll();
-      renderHome();
-      homeCard.classList.remove('hidden');
-    }
+    wordBookBtn.addEventListener("click", () => {
+      renderWordBook();
+      hidePanelsExcept(wordBookPanel);
+    });
 
-    function showPassage() {
-      hideAll();
-      renderPassage();
-      passageCard.classList.remove('hidden');
-    }
-
-    function showQuestion() {
-      hideAll();
-      renderQuestion();
-      questionCard.classList.remove('hidden');
-    }
-
-    function showWrongBook() {
-      hideAll();
+    wrongBookBtn.addEventListener("click", () => {
       renderWrongBook();
-      wrongBookCard.classList.remove('hidden');
-    }
+      hidePanelsExcept(wrongBookPanel);
+    });
 
-    function startSelectedPassage() {
-      currentQuestionIndex = 0;
-      score = 0;
-      writingChecks = {};
-      writingAnswer.value = '';
-      showQuestion();
-    }
+    prevBtn.addEventListener("click", () => {
+      stopSpeaking();
+      currentPassageIndex = (currentPassageIndex - 1 + passages.length) % passages.length;
+      renderPassage();
+      wordHelpPanel.classList.add("hidden");
+      wordBookPanel.classList.add("hidden");
+      wrongBookPanel.classList.add("hidden");
+    });
 
-    function showResults() {
-      hideAll();
-      const passage = getSelectedPassage();
-      resultCard.classList.remove('hidden');
+    nextBtn.addEventListener("click", () => {
+      stopSpeaking();
+      currentPassageIndex = (currentPassageIndex + 1) % passages.length;
+      renderPassage();
+      wordHelpPanel.classList.add("hidden");
+      wordBookPanel.classList.add("hidden");
+      wrongBookPanel.classList.add("hidden");
+    });
 
-      const multipleCount = passage.questions.filter(q => q.type === 'multiple').length;
-      resultPassageTitle.textContent = passage.title;
-      finalScore.textContent = `${score} / ${multipleCount}`;
+    closePopupBtn.addEventListener("click", closeWordPopup);
+    wordPopup.addEventListener("click", (e) => {
+      if (e.target === wordPopup) closeWordPopup();
+    });
 
-      if (multipleCount === 0) {
-        finalMessage.textContent = 'This passage focused on writing practice.';
-      } else if (score === multipleCount) {
-        finalMessage.textContent = 'Amazing work! You got every multiple-choice question correct.';
-      } else if (score >= Math.max(1, multipleCount - 1)) {
-        finalMessage.textContent = 'Great job! You are very close to perfect.';
-      } else if (score >= Math.ceil(multipleCount / 2)) {
-        finalMessage.textContent = 'Nice work. Keep practicing and you will get even stronger.';
-      } else {
-        finalMessage.textContent = 'Good start. Read carefully and try again.';
-      }
-
-      const writingEntries = Object.entries(writingChecks);
-      if (writingEntries.length > 0) {
-        writingSummary.innerHTML = writingEntries
-          .map(([id, result]) => `✍️ ${id}: <strong>${result}</strong>`)
-          .join('<br>');
-      } else {
-        writingSummary.innerHTML = '✍️ No writing question checked yet.';
-      }
-    }
-
-    function restartCurrentPassage() {
-      resetProgress();
-      showQuestion();
-    }
-
-    function escapeHtml(text) {
-      return String(text)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#39;');
-    }
-
-    window.showHome = showHome;
-    window.showPassage = showPassage;
-    window.showQuestion = showQuestion;
-    window.showWrongBook = showWrongBook;
-    window.startSelectedPassage = startSelectedPassage;
-    window.nextQuestion = nextQuestion;
-    window.checkWriting = checkWriting;
-    window.fillSample = fillSample;
-    window.showResults = showResults;
-    window.restartCurrentPassage = restartCurrentPassage;
-    window.clearWrongBook = clearWrongBook;
-
-    showHome();
+    renderPassage();
+    renderWordBook();
+    renderWrongBook();
   </script>
 </body>
 </html>
