@@ -312,7 +312,7 @@
       <div class="top-bar">
         <div>
           <h1>📘 Grade 3 ELA Trainer</h1>
-          <div class="small-note">Practice mode + parent notes + wrong book</div>
+          <div class="small-note">English-only UI with parent notes and wrong book</div>
         </div>
         <div class="nav-row" style="margin-top:0;">
           <button class="primary-btn" onclick="showHome()">Home</button>
@@ -375,21 +375,21 @@
         <div id="parentPanel" class="parent-panel hidden">
           <h4>👨‍👩‍👧 Parent Notes</h4>
           <div class="parent-row">
-            <span class="parent-label">题型：</span>
+            <span class="parent-label">Skill:</span>
             <span id="parentSkill"></span>
           </div>
           <div class="parent-row">
-            <span class="parent-label">难度：</span>
+            <span class="parent-label">Difficulty:</span>
             <span id="parentDifficulty"></span>
           </div>
           <div class="divider"></div>
           <div class="parent-row">
-            <span class="parent-label">中文讲解：</span>
-            <span id="parentCnExplanation"></span>
+            <span class="parent-label">Parent Explanation:</span>
+            <span id="parentExplanation"></span>
           </div>
           <div class="divider"></div>
           <div class="parent-row">
-            <span class="parent-label">高频错因：</span>
+            <span class="parent-label">Common Mistake:</span>
             <span id="parentMistake"></span>
           </div>
         </div>
@@ -474,7 +474,7 @@
     const parentPanel = document.getElementById('parentPanel');
     const parentSkill = document.getElementById('parentSkill');
     const parentDifficulty = document.getElementById('parentDifficulty');
-    const parentCnExplanation = document.getElementById('parentCnExplanation');
+    const parentExplanation = document.getElementById('parentExplanation');
     const parentMistake = document.getElementById('parentMistake');
 
     const wrongBookStats = document.getElementById('wrongBookStats');
@@ -527,12 +527,12 @@
         questionId: q.id,
         number: q.number || '',
         type: q.type,
-        skillLabelZh: q.skillLabelZh || '',
+        skillLabel: q.skillLabel || '',
         difficulty: q.difficulty || '',
         question: q.question,
         correctAnswer: `${String.fromCharCode(65 + q.answer)}. ${q.choices[q.answer]}`,
         userAnswer: `${String.fromCharCode(65 + selectedIndex)}. ${q.choices[selectedIndex]}`,
-        cnExplanation: q.cnExplanation || '',
+        parentExplanation: q.parentExplanation || '',
         commonMistake: q.commonMistake || '',
         sample: q.sample || ''
       });
@@ -549,12 +549,12 @@
         questionId: q.id,
         number: q.number || '',
         type: q.type,
-        skillLabelZh: q.skillLabelZh || '',
+        skillLabel: q.skillLabel || '',
         difficulty: q.difficulty || '',
         question: q.question,
         correctAnswer: q.sample || 'See sample answer.',
         userAnswer: writingAnswer.value.trim() || '(blank)',
-        cnExplanation: q.cnExplanation || '',
+        parentExplanation: q.parentExplanation || '',
         commonMistake: q.commonMistake || '',
         sample: q.sample || '',
         writingLevel: level
@@ -644,9 +644,9 @@
         box.innerHTML = `
           <h4>${item.passageTitle} ${item.number ? `• Q${item.number}` : ''}</h4>
           <div style="margin-bottom: 8px;">
-            ${item.skillLabelZh ? `<span class="tag">${item.skillLabelZh}</span>` : ''}
-            ${item.difficulty ? `<span class="tag tag-difficulty">难度：${item.difficulty}</span>` : ''}
-            <span class="tag tag-wrong">错了 ${item.count || 1} 次</span>
+            ${item.skillLabel ? `<span class="tag">${item.skillLabel}</span>` : ''}
+            ${item.difficulty ? `<span class="tag tag-difficulty">Difficulty: ${item.difficulty}</span>` : ''}
+            <span class="tag tag-wrong">Missed ${item.count || 1} time(s)</span>
           </div>
 
           <div><strong>Question:</strong> ${item.question}</div>
@@ -656,8 +656,8 @@
             <div><strong>Correct / Sample:</strong> ${escapeHtml(item.correctAnswer || '—')}</div>
           </div>
 
-          ${item.cnExplanation ? `<div style="margin-top:10px;"><strong>中文讲解：</strong>${item.cnExplanation}</div>` : ''}
-          ${item.commonMistake ? `<div style="margin-top:10px;"><strong>高频错因：</strong>${item.commonMistake}</div>` : ''}
+          ${item.parentExplanation ? `<div style="margin-top:10px;"><strong>Parent Explanation:</strong> ${item.parentExplanation}</div>` : ''}
+          ${item.commonMistake ? `<div style="margin-top:10px;"><strong>Common Mistake:</strong> ${item.commonMistake}</div>` : ''}
 
           <div class="nav-row">
             <button class="primary-btn" data-action="retry" data-passage="${item.passageId}" data-question="${item.questionId}">Retry This Question</button>
@@ -725,9 +725,15 @@
 
     function renderQuestionMeta(q) {
       let html = '';
-      if (q.skillLabelZh) html += `<span class="tag">${q.skillLabelZh}</span>`;
-      if (q.difficulty) html += `<span class="tag tag-difficulty">难度：${q.difficulty}</span>`;
-      if (q.type === 'writing') html += `<span class="tag tag-parent">写作题</span>`;
+      if (q.skillLabel) {
+        html += `<span class="tag">${q.skillLabel}</span>`;
+      }
+      if (q.difficulty) {
+        html += `<span class="tag tag-difficulty">Difficulty: ${q.difficulty}</span>`;
+      }
+      if (q.type === 'writing') {
+        html += `<span class="tag tag-parent">Writing Task</span>`;
+      }
       questionMeta.innerHTML = html;
     }
 
@@ -780,16 +786,16 @@
 
     function renderParentPanel(q) {
       const hasAnyParentData =
-        q.skillLabelZh || q.difficulty || q.cnExplanation || q.commonMistake;
+        q.skillLabel || q.difficulty || q.parentExplanation || q.commonMistake;
 
       if (!hasAnyParentData) {
         parentPanel.classList.add('hidden');
         return;
       }
 
-      parentSkill.textContent = q.skillLabelZh || '—';
+      parentSkill.textContent = q.skillLabel || '—';
       parentDifficulty.textContent = q.difficulty || '—';
-      parentCnExplanation.textContent = q.cnExplanation || '—';
+      parentExplanation.textContent = q.parentExplanation || '—';
       parentMistake.textContent = q.commonMistake || '—';
       parentPanel.classList.remove('hidden');
     }
@@ -805,8 +811,13 @@
         btn.classList.add('disabled');
         btn.disabled = true;
 
-        if (index === q.answer) btn.classList.add('correct');
-        if (index === selectedIndex && index !== q.answer) btn.classList.add('wrong');
+        if (index === q.answer) {
+          btn.classList.add('correct');
+        }
+
+        if (index === selectedIndex && index !== q.answer) {
+          btn.classList.add('wrong');
+        }
       });
 
       if (selectedIndex === q.answer) {
