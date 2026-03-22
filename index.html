@@ -1,41 +1,619 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>ELA Trainer</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grade 3 ELA Trainer</title>
   <style>
-    body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
-    button { display: block; margin: 10px 0; padding: 10px; width: 100%; }
-    .correct { color: green; }
-    .wrong { color: red; }
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f6f8fb;
+      color: #222;
+    }
+
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+
+    .top-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .small-note {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .passage-title {
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+
+    .passage-text p {
+      line-height: 1.7;
+      margin: 0 0 14px 0;
+    }
+
+    .question-number {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .choices {
+      display: grid;
+      gap: 12px;
+    }
+
+    button.choice-btn,
+    button.nav-btn,
+    button.mode-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.2s ease;
+    }
+
+    button.choice-btn {
+      width: 100%;
+      text-align: left;
+      background: #f2f4f8;
+    }
+
+    button.choice-btn:hover {
+      background: #e6ebf4;
+    }
+
+    button.choice-btn.correct {
+      background: #dff5e4;
+      border: 2px solid #3aa85b;
+    }
+
+    button.choice-btn.wrong {
+      background: #fde3e3;
+      border: 2px solid #d94a4a;
+    }
+
+    button.choice-btn.disabled {
+      opacity: 0.9;
+      cursor: default;
+    }
+
+    button.nav-btn,
+    button.mode-btn {
+      background: #2563eb;
+      color: white;
+    }
+
+    button.nav-btn:hover,
+    button.mode-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .secondary-btn {
+      background: #6b7280 !important;
+    }
+
+    .secondary-btn:hover {
+      background: #4b5563 !important;
+    }
+
+    .feedback {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 12px;
+      line-height: 1.6;
+      display: none;
+    }
+
+    .feedback.correct {
+      background: #e9f9ee;
+      color: #1f6a35;
+      display: block;
+    }
+
+    .feedback.wrong {
+      background: #fff1f1;
+      color: #9b2226;
+      display: block;
+    }
+
+    .explanation {
+      margin-top: 8px;
+      color: #333;
+    }
+
+    .nav-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .result-box {
+      text-align: center;
+      padding: 30px 20px;
+    }
+
+    .score-big {
+      font-size: 42px;
+      font-weight: bold;
+      margin: 12px 0;
+    }
+
+    .mode-switch {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #d1d5db;
+      font-size: 16px;
+      line-height: 1.6;
+      resize: vertical;
+    }
+
+    .template-box {
+      background: #f8fafc;
+      border: 1px dashed #94a3b8;
+      padding: 14px;
+      border-radius: 12px;
+      margin: 14px 0;
+      line-height: 1.7;
+    }
+
+    .checklist {
+      margin-top: 14px;
+      padding-left: 18px;
+      line-height: 1.8;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eef3ff;
+      color: #1e40af;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 640px) {
+      .question-text {
+        font-size: 18px;
+      }
+
+      .passage-title {
+        font-size: 20px;
+      }
+
+      .score-big {
+        font-size: 34px;
+      }
+    }
   </style>
 </head>
-
 <body>
+  <div class="container">
+    <div class="card">
+      <div class="top-bar">
+        <div>
+          <h1>📘 Grade 3 ELA Trainer</h1>
+          <div class="small-note">Passage reading + multiple choice + writing practice</div>
+        </div>
+        <div class="mode-switch">
+          <button class="mode-btn" onclick="showPassage()">Read Passage</button>
+          <button class="mode-btn secondary-btn" onclick="showQuiz()">Start Questions</button>
+          <button class="mode-btn" onclick="showWriting()">Writing</button>
+        </div>
+      </div>
+    </div>
 
-<h1>📘 Grade 3 ELA Trainer</h1>
+    <div id="passageCard" class="card">
+      <div class="passage-title">Sea View Star</div>
+      <div class="small-note" style="margin-bottom: 14px;">Short practice passage</div>
+      <div class="passage-text">
+        <p>Sylvie and Sammy’s teacher has announced that students will do a project for “Make a Difference Day.” This means students will find a special way to help others. Sylvie and Sammy are doing the project together.</p>
 
-<h3>Question:</h3>
-<p>What does "stellar" mean?</p>
+        <p>Sylvie tapped Sammy’s shoulder and pointed to the swing set. They always got their best ideas on the swings. “Race you up!” She hopped on a swing and pumped her legs. Sammy followed.</p>
 
-<button onclick="check('A')">A. amazing</button>
-<button onclick="check('B')">B. normal</button>
-<button onclick="check('C')">C. boring</button>
-<button onclick="check('D')">D. fast</button>
+        <p>“We need to do something extra stellar for the animals,” said Sylvie.</p>
 
-<p id="result"></p>
+        <p>Sammy had ideas too. When they looked at their lists, they discovered they both wanted to hold an art show to raise money for animals.</p>
 
-<script>
-function check(answer) {
-  if (answer === 'A') {
-    document.getElementById("result").innerHTML =
-      "<span class='correct'>✅ Correct! 'stellar' means amazing.</span>";
-  } else {
-    document.getElementById("result").innerHTML =
-      "<span class='wrong'>❌ Try again</span>";
-  }
-}
-</script>
+        <p>“Ready to start planning our art show for animals?” asked Sylvie. “Or ‘Paint Out!’ Sounds more stellar, doesn’t it?”</p>
 
+        <p>They decided people could paint pictures of their pets outside the shops on Beach Street. Then they could sell the paintings and donate the money to the Sea View Animal Shelter.</p>
+
+        <p>Before dinner, they had already gotten permission from the town, informed the animal shelter, and told friends and family to save the date. When Make a Difference Day arrived, everything was ready.</p>
+
+        <p>By the end, the Paint Out was full of people, pets, colors, and excitement. Sylvie looked around proudly as the event became a huge success.</p>
+      </div>
+
+      <div class="nav-row">
+        <button class="nav-btn" onclick="showQuiz()">I Finished Reading ▶</button>
+        <button class="nav-btn secondary-btn" onclick="showWriting()">Go to Writing ✍️</button>
+      </div>
+    </div>
+
+    <div id="quizCard" class="card hidden">
+      <div class="question-number" id="questionNumber"></div>
+      <div class="question-text" id="questionText"></div>
+      <div class="choices" id="choicesContainer"></div>
+
+      <div id="feedbackBox" class="feedback">
+        <div id="feedbackTitle"></div>
+        <div class="explanation" id="feedbackExplanation"></div>
+      </div>
+
+      <div class="nav-row">
+        <button id="nextBtn" class="nav-btn hidden" onclick="nextQuestion()">Next Question ▶</button>
+        <button id="quizResultBtn" class="nav-btn secondary-btn hidden" onclick="showResults()">See Results ▶</button>
+      </div>
+    </div>
+
+    <div id="writingCard" class="card hidden">
+      <div class="question-number">Writing Practice</div>
+      <div class="question-text">What is the main idea of the passage? Use two details from the story to support your answer.</div>
+
+      <div style="margin-bottom: 10px;">
+        <span class="tag">Main Idea</span>
+        <span class="tag">2 Details</span>
+        <span class="tag">Complete Sentences</span>
+      </div>
+
+      <div class="template-box">
+        <strong>Sentence Frame:</strong><br><br>
+        The main idea is ______.<br>
+        One detail is ______.<br>
+        Another detail is ______.
+      </div>
+
+      <textarea id="writingAnswer" placeholder="Type your answer here..."></textarea>
+
+      <div class="nav-row">
+        <button class="nav-btn" onclick="checkWriting()">Check My Writing</button>
+        <button class="nav-btn secondary-btn" onclick="fillSample()">Use Sample Answer</button>
+      </div>
+
+      <div id="writingFeedback" class="feedback" style="display:none;">
+        <div id="writingTitle"></div>
+        <div class="explanation" id="writingExplanation"></div>
+        <ul class="checklist" id="writingChecklist"></ul>
+      </div>
+    </div>
+
+    <div id="resultCard" class="card hidden">
+      <div class="result-box">
+        <h2>🎉 Great job!</h2>
+        <div class="small-note">You finished today's practice.</div>
+        <div class="score-big" id="finalScore"></div>
+        <div id="finalMessage" style="margin-bottom: 18px;"></div>
+        <div id="writingSummary" style="margin-bottom: 18px;"></div>
+
+        <div class="nav-row" style="justify-content: center;">
+          <button class="nav-btn" onclick="restartQuiz()">Do Questions Again</button>
+          <button class="nav-btn secondary-btn" onclick="showWriting()">Go to Writing</button>
+          <button class="nav-btn secondary-btn" onclick="showPassage()">Read Passage Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: 'What does "stellar" most likely mean in the passage?',
+        choices: [
+          'A. amazing',
+          'B. normal',
+          'C. boring',
+          'D. fast'
+        ],
+        correct: 0,
+        explanation: '"Stellar" here means something very good or amazing. Sylvie wants the event name to sound better and more exciting.'
+      },
+      {
+        question: 'Why do Sylvie and Sammy plan the Paint Out?',
+        choices: [
+          'A. To decorate Beach Street',
+          'B. To help animals',
+          'C. To play with their friends',
+          'D. To open a paint store'
+        ],
+        correct: 1,
+        explanation: 'They want to sell paintings and donate the money to the Sea View Animal Shelter, so the purpose is to help animals.'
+      },
+      {
+        question: 'Which detail best shows that preparation helped the event succeed?',
+        choices: [
+          'A. They liked getting ideas on swings',
+          'B. Sylvie named the event "Paint Out"',
+          'C. They got permission, informed the shelter, and told friends before the event',
+          'D. People arrived by bus and car'
+        ],
+        correct: 2,
+        explanation: 'This choice shows planning ahead. Preparation is getting everything ready before the big day.'
+      },
+      {
+        question: 'How does Sylvie most likely feel at the end of the passage?',
+        choices: [
+          'A. Angry',
+          'B. Proud',
+          'C. Confused',
+          'D. Nervous'
+        ],
+        correct: 1,
+        explanation: 'At the end, the event is a huge success and Sylvie looks around proudly. That shows she feels proud.'
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let answered = false;
+    let writingChecked = false;
+    let writingScoreText = "Not checked yet";
+
+    const passageCard = document.getElementById('passageCard');
+    const quizCard = document.getElementById('quizCard');
+    const writingCard = document.getElementById('writingCard');
+    const resultCard = document.getElementById('resultCard');
+
+    const questionNumber = document.getElementById('questionNumber');
+    const questionText = document.getElementById('questionText');
+    const choicesContainer = document.getElementById('choicesContainer');
+
+    const feedbackBox = document.getElementById('feedbackBox');
+    const feedbackTitle = document.getElementById('feedbackTitle');
+    const feedbackExplanation = document.getElementById('feedbackExplanation');
+
+    const nextBtn = document.getElementById('nextBtn');
+    const quizResultBtn = document.getElementById('quizResultBtn');
+
+    function hideAll() {
+      passageCard.classList.add('hidden');
+      quizCard.classList.add('hidden');
+      writingCard.classList.add('hidden');
+      resultCard.classList.add('hidden');
+    }
+
+    function showPassage() {
+      hideAll();
+      passageCard.classList.remove('hidden');
+    }
+
+    function showQuiz() {
+      hideAll();
+      quizCard.classList.remove('hidden');
+      renderQuestion();
+    }
+
+    function showWriting() {
+      hideAll();
+      writingCard.classList.remove('hidden');
+    }
+
+    function renderQuestion() {
+      answered = false;
+      feedbackBox.className = 'feedback';
+      feedbackBox.style.display = 'none';
+      nextBtn.classList.add('hidden');
+      quizResultBtn.classList.add('hidden');
+
+      const q = questions[currentQuestion];
+      questionNumber.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+      questionText.textContent = q.question;
+      choicesContainer.innerHTML = '';
+
+      q.choices.forEach((choice, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.textContent = choice;
+        btn.onclick = () => selectAnswer(index);
+        choicesContainer.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(selectedIndex) {
+      if (answered) return;
+      answered = true;
+
+      const q = questions[currentQuestion];
+      const buttons = document.querySelectorAll('.choice-btn');
+
+      buttons.forEach((btn, index) => {
+        btn.classList.add('disabled');
+
+        if (index === q.correct) {
+          btn.classList.add('correct');
+        }
+
+        if (index === selectedIndex && index !== q.correct) {
+          btn.classList.add('wrong');
+        }
+
+        btn.disabled = true;
+      });
+
+      if (selectedIndex === q.correct) {
+        score++;
+        feedbackBox.className = 'feedback correct';
+        feedbackTitle.innerHTML = '✅ Correct!';
+      } else {
+        feedbackBox.className = 'feedback wrong';
+        feedbackTitle.innerHTML = `❌ Not quite. The correct answer is ${q.choices[q.correct]}.`;
+      }
+
+      feedbackExplanation.textContent = q.explanation;
+      feedbackBox.style.display = 'block';
+
+      if (currentQuestion < questions.length - 1) {
+        nextBtn.classList.remove('hidden');
+      } else {
+        quizResultBtn.classList.remove('hidden');
+      }
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      renderQuestion();
+    }
+
+    function checkWriting() {
+      const text = document.getElementById('writingAnswer').value.trim();
+      const lower = text.toLowerCase();
+
+      const writingFeedback = document.getElementById('writingFeedback');
+      const writingTitle = document.getElementById('writingTitle');
+      const writingExplanation = document.getElementById('writingExplanation');
+      const writingChecklist = document.getElementById('writingChecklist');
+
+      let points = 0;
+      let items = [];
+
+      const hasEnoughText = text.length > 20;
+      const hasMainIdea = lower.includes('main idea') || lower.includes('help animals') || lower.includes('paint out');
+      const hasDetail1 = lower.includes('sell') || lower.includes('painting');
+      const hasDetail2 = lower.includes('donate') || lower.includes('animal shelter') || lower.includes('permission') || lower.includes('friends and family');
+      const hasPeriods = text.includes('.');
+
+      if (hasEnoughText) {
+        points++;
+        items.push('✅ You wrote enough to show your thinking.');
+      } else {
+        items.push('❌ Write a little more.');
+      }
+
+      if (hasMainIdea) {
+        points++;
+        items.push('✅ You included a main idea.');
+      } else {
+        items.push('❌ Add the main idea of the story.');
+      }
+
+      if (hasDetail1) {
+        points++;
+        items.push('✅ You included one supporting detail.');
+      } else {
+        items.push('❌ Add one detail from the passage.');
+      }
+
+      if (hasDetail2) {
+        points++;
+        items.push('✅ You included a second supporting detail.');
+      } else {
+        items.push('❌ Add another detail from the passage.');
+      }
+
+      if (hasPeriods) {
+        items.push('✅ Looks like you used complete sentences.');
+      } else {
+        items.push('❌ Try writing in complete sentences with periods.');
+      }
+
+      writingChecked = true;
+
+      if (points >= 4) {
+        writingScoreText = "Strong writing response";
+        writingFeedback.className = 'feedback correct';
+        writingTitle.innerHTML = '✅ Nice job!';
+        writingExplanation.innerHTML = 'Your response includes the important parts of a strong 2-point answer.';
+      } else if (points >= 2) {
+        writingScoreText = "Developing response";
+        writingFeedback.className = 'feedback wrong';
+        writingTitle.innerHTML = '🟡 Good start!';
+        writingExplanation.innerHTML = 'You have some good ideas. Add clearer details to make your answer stronger.';
+      } else {
+        writingScoreText = "Needs more detail";
+        writingFeedback.className = 'feedback wrong';
+        writingTitle.innerHTML = '❌ Keep going!';
+        writingExplanation.innerHTML = 'Try using the sentence frame and include two details from the story.';
+      }
+
+      writingChecklist.innerHTML = items.map(item => `<li>${item}</li>`).join('');
+      writingFeedback.style.display = 'block';
+    }
+
+    function fillSample() {
+      document.getElementById('writingAnswer').value =
+        "The main idea is that Sylvie and Sammy plan an event to help animals. One detail is that they sell paintings. Another detail is that they donate the money to the animal shelter.";
+    }
+
+    function showResults() {
+      hideAll();
+      resultCard.classList.remove('hidden');
+
+      document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
+      let message = '';
+
+      if (score === questions.length) {
+        message = 'Amazing work! You got every multiple-choice question correct.';
+      } else if (score >= questions.length - 1) {
+        message = 'Great job! You are very close to perfect.';
+      } else if (score >= 2) {
+        message = 'Nice work. Keep practicing and you will get even stronger.';
+      } else {
+        message = 'Good start. Read carefully and try again.';
+      }
+
+      document.getElementById('finalMessage').textContent = message;
+
+      if (writingChecked) {
+        document.getElementById('writingSummary').innerHTML =
+          `✍️ Writing check: <strong>${writingScoreText}</strong>`;
+      } else {
+        document.getElementById('writingSummary').innerHTML =
+          `✍️ Writing check: <strong>Not done yet</strong>`;
+      }
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      showQuiz();
+    }
+  </script>
 </body>
 </html>
