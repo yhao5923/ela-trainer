@@ -15,12 +15,7 @@ They will donate the money to the Sea View Animal Shelter. Before the event, the
         type: "multiple",
         skill: "vocabulary",
         question: `What does "stellar" most likely mean?`,
-        choices: [
-          "amazing",
-          "normal",
-          "boring",
-          "fast"
-        ],
+        choices: ["amazing", "normal", "boring", "fast"],
         answer: 0,
         explanation: `"Stellar" means amazing because Sylvie is describing something very good.`
       },
@@ -85,12 +80,7 @@ They will donate the money to the Sea View Animal Shelter. Before the event, the
         type: "multiple",
         skill: "feeling",
         question: `How does Sylvie feel at the end?`,
-        choices: [
-          "Angry",
-          "Confused",
-          "Nervous",
-          "Proud"
-        ],
+        choices: ["Angry", "Confused", "Nervous", "Proud"],
         answer: 3,
         explanation: `The event is successful, so she feels proud.`
       }
@@ -178,7 +168,6 @@ Raccoons can sometimes cause problems for people. They knock over trash cans and
         answer: 0,
         explanation: `The passage says they are smart and quick.`
       },
-
       {
         id: "q24",
         type: "writing",
@@ -191,7 +180,6 @@ Raccoons can sometimes cause problems for people. They knock over trash cans and
           "Another detail is ______."
         ]
       },
-
       {
         id: "q25",
         type: "writing",
