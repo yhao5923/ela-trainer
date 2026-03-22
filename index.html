@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ELA Trainer</title>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
+    button { display: block; margin: 10px 0; padding: 10px; width: 100%; }
+    .correct { color: green; }
+    .wrong { color: red; }
+  </style>
+</head>
+
+<body>
+
+<h1>📘 Grade 3 ELA Trainer</h1>
+
+<h3>Question:</h3>
+<p>What does "stellar" mean?</p>
+
+<button onclick="check('A')">A. amazing</button>
+<button onclick="check('B')">B. normal</button>
+<button onclick="check('C')">C. boring</button>
+<button onclick="check('D')">D. fast</button>
+
+<p id="result"></p>
+
+<script>
+function check(answer) {
+  if (answer === 'A') {
+    document.getElementById("result").innerHTML =
+      "<span class='correct'>✅ Correct! 'stellar' means amazing.</span>";
+  } else {
+    document.getElementById("result").innerHTML =
+      "<span class='wrong'>❌ Try again</span>";
+  }
+}
+</script>
+
+</body>
+</html>
